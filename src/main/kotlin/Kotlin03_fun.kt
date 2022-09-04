@@ -1,4 +1,5 @@
 import kotlin.math.PI
+import kotlin.random.Random
 
 class Kotlin03_fun {
     fun circleArea(radius: Double): Double {
@@ -177,6 +178,42 @@ fun main() {
         in 10..100 -> "Large"
         !in Int.MIN_VALUE until 0 -> "Negative"
         else -> "Huge"
+    }
+    /*
+    * 루프
+    * 코틀린에서 모든 루프는 식이 아니고 문이기 때문에 어떤 값을 평가되지 않으며 부수 효과를 발생시킬 수 만 있다.
+    * */
+    var sum = 0
+    var num = 0
+
+    do {
+        num = readLine()!!.toInt()
+        sum += num
+    } while (num != 0)
+
+    val randomInt = Random.nextInt(1,101)
+    var guess = 0
+
+    while(guess!=num) {
+        guess = readLine()!!.toInt()
+        if(guess<num) println("Too small")
+        else if (guess > num) println("Too big")
+    }
+
+    // 레이블 붙이기
+    fun indexOf(subarray : IntArray, array:IntArray) : Int {
+        outerLoop@ for (i in array.indices) {
+            for(j in subarray.indices) {
+                if(subarray[j] != array[i+j]) continue@outerLoop
+            }
+            return i
+        }
+        return -1
+    }
+
+    //코틀린에서 꼬리재귀 함수 앞에 tailrec을 붙히면 비재귀로 동작한다.
+    tailrec fun sum(a:Int, b:Int) {
+        return sum(a,b)
     }
 }
 
