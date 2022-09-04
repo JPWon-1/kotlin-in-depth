@@ -36,9 +36,9 @@ class Kotlin03_fun {
     /*
     * 오버로딩과 디폴트 값
     * */
-    fun mul(a: Int, b: Int) :Int = a * b
-    fun mul(a: Long, b: Int) : Long = a * b
-    fun main3(){
+    fun mul(a: Int, b: Int): Int = a * b
+    fun mul(a: Long, b: Int): Long = a * b
+    fun main3() {
         val mul1 = mul(1, 2)
         val mul2 = mul(1L, 2)
         println(mul1)
@@ -53,6 +53,7 @@ class Kotlin03_fun {
         items.sort()
         println(items.contentToString())
     }
+
     /*
     * 스프레드 연산자인 *를 사용해서 가변 인자 대신 넘길 수 있다.
     * val numbers = intArrayOf(6,2,10,1)
@@ -62,25 +63,27 @@ class Kotlin03_fun {
     * 따라서 파라미터 배열의 내용을 바꿔도 원본 원소에는 영향을 미치지 않는다.
     * 그런데 배열 내부에 참조가 들어있을 경우에는 참조가 복사되기 때문에 참조가 가리키는 데이터가 호출하는 쪽과 함수 내부 배열에서 공유된다.
     * */
-    fun change(vararg items: IntArray){
+    fun change(vararg items: IntArray) {
         items.iterator().forEach {
             println(it.contentToString())
         }
         items[0][1] = 100
     }
+
+
 }
 
 
-fun main(){
+fun main() {
     val kotlin03Fun = Kotlin03_fun()
-    kotlin03Fun.printSorted(6,2,10,1)
-    val numbers = intArrayOf(6,2,10,1)
+    kotlin03Fun.printSorted(6, 2, 10, 1)
+    val numbers = intArrayOf(6, 2, 10, 1)
     kotlin03Fun.printSorted(*numbers)
 
-    val a= intArrayOf(1,2,3,)
-    val b = intArrayOf(4,5,6)
+    val a = intArrayOf(1, 2, 3)
+    val b = intArrayOf(4, 5, 6)
 
-    kotlin03Fun.change(a,b)
+    kotlin03Fun.change(a, b)
     println(a.contentToString())
     println(b.contentToString())
 
@@ -89,9 +92,92 @@ fun main(){
     * 하지만 vararg 파라미터에 콤마로 여러 인자와 스프레드를 섞어서 전달하는 것은 괜찮다.
     * 호출 시 이러한 호출은 원래의 순서가 유지되는 단일 배열로 합쳐진다.
     * */
-    println(kotlin03Fun.printSorted(6,1,*intArrayOf(1,2,3,4),2))//6,1,1,2,3,4,2
+    println(kotlin03Fun.printSorted(6, 1, *intArrayOf(1, 2, 3, 4), 2))//6,1,1,2,3,4,2
     //=> [1,1,2,2,4,6]
 
+    /*
+   * 범위, 진행, 연산
+   * 범위를 만드는 방법 중 가장 간단한 방법은 .. 연산자를 사용하는 것이다.
+   * val chars = 'a'..'h'
+   * val nums = 1..9
+   * val zeroToOne = 0.0..1.0
+   *
+   * in 연산자를 사용하면 어떤 값이 범위 안에 들어가있는지 알 수 있다.
+   * val num = readLine()!!.toInt()
+   * num in 10..99 // num>=10 && num <= 99
+   * 이와 반대인 not in  연산자도 있다.
+   * !in 10..99 // num<10 && num>99
+   * in연산자는 숫자뿐만 아니라 문자열이나 배열도 지원한다.
+   * val numbers = intArrayOf(1,2,3,4,5,6,7)
+   * 2 in numbers // true
+   * 9 !in numbers // true
+   *
+   * val text = "Hello!"
+   * 'a' in text // true
+   * 'H' in text // true
+   * 'h' !in text // true
+   *
+   * ..연산에 의해 만들어지는 범위는 닫혀있다. 끝값이 범위에 포함된다는 의미이다. ( <=, >= )
+   *
+   * 반만 닫힌 범위를 만드는 연산자도 있다.
+   * until 을 쓰면 경계값은 포함하지 않는다.
+   * val twoDigits = 10 until 100 // 10..99
+   * */
+    println(5 in 5..5) // true
+    println(5 in 5 until 5)//false
+    println(5 in 10..1)//false
+
+    // 범위를 반대로 진행할 수 있다.
+    5 in 10 downTo 1//true
+    5 in 1 downTo 10//false
+
+    // 진행의 간격을 지정할 수 있다.
+    1..10 step 3 // 1, 4, 7 , 10
+    15 downTo 9 step 2 // 15, 13 , 11 , 9
+    //step은 양수여야 한다.
+
+    /*
+    * when
+    * if문은 두가지 가능성 중 하나를 선택하게 해주는 반면, when은 if문을 연쇄적으로 사용하여 순차적으로
+    * 대상 조건을 검사하여 그 중 하나를 선택할 수 있게 해주는 조건절이다.
+    * */
+    fun hexDigit(n: Int): Char {
+        if(n in 0..9) return '0'+n
+        else if (n in 10..15) return 'A' + n - 10
+        else return '?'
+    }
+
+    fun hexDigit2(n: Int): Char {
+        when {
+            n in 0..9 -> return '0' +n
+            n in 10..15 -> return 'A' + n - 10
+            else -> return '?'
+        }
+    }
+
+    fun hexDigit3(n: Int) = when {
+        n in 0..9 -> '0'+n
+        n in 10..15 -> 'A' + n - 10
+        else -> '?'
+    }
+
+    fun numberDescription(n:Int): String = when {
+        n == 0 -> "Zero"
+        n == 1 || n == 2 || n ==3 -> "Small"
+        n in 4..9 -> "Medium"
+        n in 10..100 -> "Large"
+        n !in Int.MIN_VALUE until 0 -> "Negative"
+        else -> "Huge"
+    }
+
+    fun numberDescription2(n:Int): String = when (n) {
+        0 -> "Zero"
+        1, 2, 3 -> "Small"
+        in 4..9 -> "Medium"
+        in 10..100 -> "Large"
+        !in Int.MIN_VALUE until 0 -> "Negative"
+        else -> "Huge"
+    }
 }
 
 
