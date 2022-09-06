@@ -1,3 +1,5 @@
+import java.lang.IllegalArgumentException
+import java.lang.NumberFormatException
 import kotlin.math.PI
 import kotlin.random.Random
 
@@ -143,35 +145,35 @@ fun main() {
     * 대상 조건을 검사하여 그 중 하나를 선택할 수 있게 해주는 조건절이다.
     * */
     fun hexDigit(n: Int): Char {
-        if(n in 0..9) return '0'+n
+        if (n in 0..9) return '0' + n
         else if (n in 10..15) return 'A' + n - 10
         else return '?'
     }
 
     fun hexDigit2(n: Int): Char {
         when {
-            n in 0..9 -> return '0' +n
+            n in 0..9 -> return '0' + n
             n in 10..15 -> return 'A' + n - 10
             else -> return '?'
         }
     }
 
     fun hexDigit3(n: Int) = when {
-        n in 0..9 -> '0'+n
+        n in 0..9 -> '0' + n
         n in 10..15 -> 'A' + n - 10
         else -> '?'
     }
 
-    fun numberDescription(n:Int): String = when {
+    fun numberDescription(n: Int): String = when {
         n == 0 -> "Zero"
-        n == 1 || n == 2 || n ==3 -> "Small"
+        n == 1 || n == 2 || n == 3 -> "Small"
         n in 4..9 -> "Medium"
         n in 10..100 -> "Large"
         n !in Int.MIN_VALUE until 0 -> "Negative"
         else -> "Huge"
     }
 
-    fun numberDescription2(n:Int): String = when (n) {
+    fun numberDescription2(n: Int): String = when (n) {
         0 -> "Zero"
         1, 2, 3 -> "Small"
         in 4..9 -> "Medium"
@@ -191,20 +193,20 @@ fun main() {
         sum += num
     } while (num != 0)
 
-    val randomInt = Random.nextInt(1,101)
+    val randomInt = Random.nextInt(1, 101)
     var guess = 0
 
-    while(guess!=num) {
+    while (guess != num) {
         guess = readLine()!!.toInt()
-        if(guess<num) println("Too small")
+        if (guess < num) println("Too small")
         else if (guess > num) println("Too big")
     }
 
     // 레이블 붙이기
-    fun indexOf(subarray : IntArray, array:IntArray) : Int {
+    fun indexOf(subarray: IntArray, array: IntArray): Int {
         outerLoop@ for (i in array.indices) {
-            for(j in subarray.indices) {
-                if(subarray[j] != array[i+j]) continue@outerLoop
+            for (j in subarray.indices) {
+                if (subarray[j] != array[i + j]) continue@outerLoop
             }
             return i
         }
@@ -212,18 +214,106 @@ fun main() {
     }
 
     //코틀린에서 꼬리재귀 함수 앞에 tailrec을 붙히면 비재귀로 동작한다.
-    tailrec fun sum(a:Int, b:Int) {
-        return sum(a,b)
+    tailrec fun sum(a: Int, b: Int) {
+        return sum(a, b)
     }
+
+    /* 예외처리
+    *  코틀린에서는 break나 continue와 같이 throws도 Nothing 타입의 식이다.
+    * */
+    fun sayHello(name: String) {
+        val message =
+            if (name.isNotEmpty()) "Hello, $name"
+            else throw IllegalArgumentException("Empty name")
+        println(message)
+    }
+
+    /*
+    * try문으로 예외 처리하기
+    * */
+
+    fun readInt(default: Int): Int {
+        try {
+            return readLine()!!.toInt()
+        } catch (e: NumberFormatException) {
+            return default
+        }
+    }
+
+
 }
 
 
+/*
+* 3장 정리 문제
+* */
+// 1. 식이 본문인 함수란?
+// 어떤 함수가 단일 식으로만 구현될 수 있다면 return키워드와 블록을 만드는 중괄호를 생략하고 다음과 같은 형태로 함수를 작성해도 된다.
+// 장점으로는 명시적으로 반환 타입 정의를 쓰지 않아도 될 ㅓㅈㅇ도로 간단한게 장점이다.
+fun circleArea(radius: Double) = PI * radius * radius
 
+// 2.디폴트 파라미터와 함수 오버로딩 중 어느 쪽을 써야할지 어떻게 결정할 수 있을까?
+//  1. 파라미터의 개수와 타입을 기준으로 호출할 수 있는 모든 함수를 찾는다.
+//  2. 덜 구체적인 함수를 제외시킨다.
+//  3. 후보가 하나로 압축되면 이 함수가 호출할 함수다. 후보가 둘 이상이면 컴파일 오류가 발생한다.
 
+// 3. 이름붙은 인자를 사용할 경우의 장단점
+// 장점 : 파라미터로 전달받은 인자가 무엇인지 확실히 알 수 있고, 눈으로 보기 쉽다.
+// 단점 : 인자가 많아지게 되면 코드가 길어지게 되고 파라미터의 이름을 변경하면 호출하는 곳의 이름도 바뀌어야 하는 불편함이 있다.
 
+// 4. 인자 개수가 가변적인 함수를 정의하는 방벙븐 무엇인가? 코틀린과 자바에서 vararg 함수는 어떻게 다른가?
+//  1. varargs
+//  2. 스프레드 연산자 *
+//  3. 코틀린의 varargs는 자바의 varargs와 동일하지만 구문은 약간 다르다. 자바에서는 ... 으로 시작하는 대신 코틀린에서는 varargs 를 붙힌다.
+/*
+ * varargs
+ * 인자의 개수가 정해지지 않은 arrayOf()같은 함수를 파라미터 정의 앞에 붙여서 함수에 쓸 수 있다.
+ * */
+fun printSorted(vararg items: Int) {
+    items.sort()
+    println(items.contentToString())
+}
 
+/*
+* 스프레드 연산자인 *를 사용해서 가변 인자 대신 넘길 수 있다.
+* val numbers = intArrayOf(6,2,10,1)
+* printSorted(*numbers)
+ */
 
+// 5. Unit과 Nothing 타입을 어디에 사용하는가?
+// 데이터의 타입과 관계 없이 특수 상황을 표현하기 위해 사용된다.
+// Unit은 흔히 함수의 반환 구문이 없다는 것을 표현하기 위해 사용된다. 자바의 void에 해당한다고 보면 된다.
+// Unit의 가장 큰 이유는 제네릭이다. 모든 함수는 값을 반환해야하는데, 코틀린은 자바에서 void를 클래스로 표현하기로 했다.
+// 클래스를 사용하는 이유는 형식 시스템을 형식 계층의 일부로 만들어 보다 일관되게 만들 수 있기 때문이다.
+interface Worker<T> {
+    fun doWork(): T
+}
+// 라는 인터페이스가 있고, 이를 확장하는 LogWorker가 있다고 치자. logWorker는 로그를 기록하는 것이 일이기에 반환값을 필요가 없다.
+// 이럴 때 우리는 코드를 다음과 같이 작성할 수 있다.
+class LogWorker : Worker<Unit> {
+    override fun doWork() {
+        // do something
+    }
+}
 
+// 이를 자바에서 표현하려면 다음과 같이 해야 한다.
+/*
+*
+interface Worker<T> {
+    T doWork();
+}
+
+class LogWorker implements Worker<Void> {
+    @Override public Void doWork() {
+        // Do the logging
+        return null;
+    }
+}
+*
+* void를 사용할 때 void를 반환 유형으로 사용해야 하고 반환문을 작성해야 하는 반면 Unit은 간단하게 코드를 작성할 수 있다.
+* */
+
+// Nothing은 데이터가 없다는 것을 명시적으로 선언하기 위해 사용하는 타입이다.
 
 
 
