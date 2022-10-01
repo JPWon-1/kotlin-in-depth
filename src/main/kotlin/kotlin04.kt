@@ -1,3 +1,4 @@
+import java.io.File
 import java.lang.IllegalArgumentException
 
 /**
@@ -175,13 +176,81 @@ class Person8(val firstName: String, val familyName: String) {
 
 }
 
+/*
+* 늦은 초기화
+* lateinit var
+* */
 
+class Content{
+    var text: String? = null
+    fun loadFile(file: File) {
+        text = file.readText()
+    }
+}
 
+// 여기서 문제는 , loadFile이 다른곳에서 호출되어 항상 어떤 파일의 내용을 모두 문자열로 읽어온다고 가정했을 때,
+// 실제 값이 항상 사용 전에 초기화되어서 절대로 널이 될수 없음에도 불구하고 늘 널 가능성 처리를 해줘야한다는 점이다.
+fun getContentSize(content: Content) = content.text?.length?:0
 
+// 늦은 초기화인 lateinit 을 사용하면 위의 문제를 막을 수 있다.
+class Content2{
+    lateinit var text:String
+    fun loadFile(file: File) {
+        text = file.readText()
+    }
+}
+// lateinit은 어떻게 보면 !! 연산자와 비슷하다.
+// lateinit 조건 1. var
+// 2.Int, Boolean같은 원시 값을 표현하는 래퍼타입이 아니여야 함. (null을 사용하기 때문)
+fun getContentSize2(content: Content2) = content.text.length
 
+// lazy
+// 호출하기 이전까지는 이 프로퍼티를 최대한 안부르고 싶다면 어떻게 해야할까?
+fun longtimeComputation() : Int {
+    return TODO("Provide the return value")
+}
 
+fun lazy(args: Array<String>){
+    val data by lazy {longtimeComputation()}
+    val name = args.firstOrNull() ?: return
+    println("$name : $data") // name이 널이면 data프로퍼티에 접근 안함!
+}
 
+/*
+* 객체 선언 object
+* 코틀린에서는 싱글턴 패턴을 선언할 때 class 대신 object라는 키워드를 사용한다.
+* object Application {}
+* */
 
+// 아래는 외부에서는 생성자를 통해 생성할수 없도록 private 생성자로 만들고 내포된 객체에 팩토리 메서드를 통해 생성자를 호출하게 만든 클래스다
+class Application private constructor(val name: String) {
+    object Factory {
+        fun create(args: Array<String>) : Application? {
+            val name = args.firstOrNull() ?: return null
+            return Application(name)
+        }
+    }
+}
+
+fun objectTest(args:Array<String>) {
+    val app = Application.Factory.create(args) ?: return
+    println(app.name)
+}
+
+// 동반 객체(companion)를 이용하면 외부 클래스의 이름을 사용해서 create를 사용할 수 있다.체
+class Application2 private constructor(val name: String) {
+    companion object Factory {
+        fun create(args: Array<String>) : Application2? {
+            val name = args.firstOrNull() ?: return null
+            return Application2(name)
+        }
+    }
+}
+
+fun companionObjectTest(args:Array<String>) {
+    val app = Application2.create(args) ?: return
+    println(app.name)
+}
 
 
 
