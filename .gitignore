@@ -3,3 +3,4 @@
 **/*.xml
 **/*.kotlin_module
 */META-INF/*
+/.idea/sonarlint/issuestore/index.pb
