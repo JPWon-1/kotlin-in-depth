@@ -69,11 +69,11 @@ fun start(vehicle: Vehicle2) {
     vehicle.start()
 }
 
-fun main() {
-    start(Car())
-    start(Boat())
-    Student("test", 25, "MIT")
-}
+//fun main() {
+//    start(Car())
+//    start(Boat())
+//    Student("test", 25, "MIT")
+//}
 
 // 프로퍼티도 오버라이드 할 수 있다. 하위 클래스 본문에 구현을 넣는 방법 외에 주생성자 파라미터로 오버라이드 할 수도 있다.
 open class Entity {
@@ -98,6 +98,27 @@ class Student2 : Person3 {
     }
 }
 
+// this 노출의 문제점
+open class Person4(val name: String, val age: Int) {
+    override fun toString() = "$name $age"
+
+    init {
+        println(this)
+    }
+}
+
+class Student4(name: String, age: Int, val university: String) : Person4(name, age) {
+
+    // student4 는 person4를 상속받았다.
+    // override 한 메서드는 상위 클래스를 먼저 호출하고 , init을 호출하는데 이 때 university 값이 초기화 안되었기 때문에
+    // person4의 toString은 student4가 상속받은 toString을 호출하고 university는 null이 찍히게 된다.
+    override fun toString() = super.toString() + " (student at $university)"
+}
+
+fun main() {
+    val student4 = Student4("jp", 10, "abcd")
+    println(student4)
+}
 class `kotlin08-inheritance`
 
 
